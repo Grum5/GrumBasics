@@ -2,3 +2,5 @@
 *.exe
 *.vscode
 /build
+/.cache
+CMakeLists.txt
