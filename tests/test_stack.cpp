@@ -37,5 +37,8 @@ int main() {
 
     pila2.pop();
     pila2.print();
+
+    pila2empty.clear();
+    pila2empty.print();
     return 0;
 }
