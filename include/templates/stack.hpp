@@ -21,9 +21,10 @@ public:
     void print() const;
     void add(const T& data);
     void pop();
-    bool empty();
+    void clear();
+    bool empty() const;
     void top() const;
-    int size();
+    int size() const;
 
 private:
     // Node Struct
@@ -66,7 +67,7 @@ Stack<T>::~Stack() {
     Node* to_delete = nullptr;
 
     // Delete all the nodes of the stack, until Top becomes nullptr
-    while (Top == nullptr) {
+    while (Top != nullptr) {
         to_delete = Top;
         Top = Top->next;
         delete to_delete;
@@ -79,20 +80,15 @@ template <typename T>
 void Stack<T>::print() const {
     /* Method that prints the Stack, from top to bottom */
 
-    // If the stack its empty then exit the method
-    if (Top == nullptr) return;
-
     // Temporal pointer to print the complete stack
     Node* current = Top;
 
-    // Expected output on CLI: ( x1, x2, x3 ... xn )
+    // Expected output on CLI: (x1, x2, x3 ... xn)
     std::cout << "(";
     while (current != nullptr) {
+        std::cout << current->data;
         if (current->next != nullptr) {
-            std::cout << current->data << ", ";
-        }
-        else {
-            std::cout << current->data;
+            std::cout << ", ";
         }
         current = current->next;
     }
@@ -103,20 +99,11 @@ template <typename T>
 void Stack<T>::add(const T& data) {
     /* Method that add a node to the top of the stack */
 
-    // Create a new node
-    Node* new_node = new Node;
-    new_node->data = data;
-    
-    // If the stack its empty then Top its the new node
-    if (Top == nullptr) {
-        new_node->next = nullptr;
-        Top = new_node;
-    }
-    // Else, the new node point to the last Top, and the new node becomes the new Top of the stack
-    else {
-        new_node->next = Top;
-        Top = new_node;
-    }
+    // Create a new node with the data and the reference to Top
+    Node* new_node = new Node{data, Top};
+
+    // Top becomes the new node
+    Top = new_node;
 }
 
 template <typename T>
@@ -126,7 +113,7 @@ void Stack<T>::pop() {
     // If the stack its empty then exit the method
     if (Top == nullptr) return;
 
-    // Create a temporal pointer of Node that points to the top, to delete it
+    // Create a temporal pointer of Node that points to the top to delete it
     Node* to_delete = Top;
 
     // Move the top node to the next node
@@ -137,7 +124,24 @@ void Stack<T>::pop() {
 }
 
 template <typename T>
-bool Stack<T>::empty() {
+void Stack<T>::clear() {
+    /* Method to clear the complete stack */
+    
+    // if the stack its empty then exit the method
+    if (Top == nullptr) return;
+
+    // Temporal pointer to delete the node
+    Node* to_delete = nullptr;
+    
+    while (Top != nullptr) {
+        to_delete = Top;
+        Top = Top->next;
+        delete to_delete;
+    }
+}
+
+template <typename T>
+bool Stack<T>::empty() const {
     /* Method that return a boolean, if the stack its empty return true, else false */
 
     if (Top == nullptr) {
@@ -152,13 +156,16 @@ void Stack<T>::top() const {
     /* Method to print the top item of the stack, this method doesnt pop the top item */
 
     // If the stack its empty, exit
-    if (Top == nullptr) return;
+    if (Top == nullptr) {
+        std::cerr << "Error: Attempt to access top of empty stack!" << std::endl;
+        return;
+    }
 
     std::cout << Top->data << std::endl;
 }
 
 template <typename T>
-int Stack<T>::size() {
+int Stack<T>::size() const {
     /* Method that returns the size of the stack */
 
     if (Top == nullptr) return 0;
