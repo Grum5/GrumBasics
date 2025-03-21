@@ -33,6 +33,7 @@ protected:
 
     // Attributes
     Node* Head;
+    Node* Tail;
 
 };
 
@@ -43,6 +44,7 @@ List<T>::List() {
     /* Empty list constructor */
 
     Head = nullptr;
+    Tail = nullptr;
 }
 
 template <typename T>
@@ -52,6 +54,7 @@ List<T>::List(T data) {
     Head = new Node;
     Head->data = data;
     Head->next = nullptr;
+    Tail = Head;
 }
 
 // - Deconstructors ------------------------------------------------------------------------
@@ -108,19 +111,12 @@ void List<T>::append(const T& value) {
     // If the list its empty, then the Head turns in the new item
     if (Head == nullptr) {
         Head = new_node;
+        Tail = new_node;
     }
     // Otherwise, the new node its added to the end of the list
     else {
-
-        // Temporal pointer to find the last node of the list
-        Node* current = Head;
-        
-        // Iterate on the list to find the last node
-        while (current->next != nullptr) {
-            current = current->next;
-        }
-        
-        current->next = new_node;
+        Tail->next = new_node;
+        Tail = new_node;
     }
 }
 
@@ -150,6 +146,12 @@ void List<T>::pop(const int index) {
 
     int size = this->size();
 
+    // Check if the list its empty
+    if (Head == nullptr) {
+        std::cerr << "Error: the list is empty, cannot pop an element." << std::endl;
+    }
+
+    // Check if the index its on the range of the list
     if (index >= size || index < 0) {
         std::cerr << "Error: The index " << index << " is out of bounds for the list. The valid index range is from 0 to " << size - 1 << " (size: " << size << ")." << std::endl;
         return;
@@ -171,6 +173,11 @@ void List<T>::pop(const int index) {
             to_delete = to_delete->next;
         }
 
+        // Update Tail if the last node is being deleted
+        if (Tail == to_delete) {
+            Tail = prev_node;
+        }
+
         prev_node->next = to_delete->next;
     }
 
@@ -189,12 +196,13 @@ void List<T>::clear() {
 
     while (Head != nullptr) {
         Node* to_delete = current;
-        delete to_delete;
         current = current->next;
+        delete to_delete;
 
     }
 
     Head = nullptr;
+    Tail = nullptr;
 }
 
 #endif //LIST_HPP_
