@@ -22,7 +22,7 @@ public:
     void add(const T& data);
     void pop();
     void clear();
-    bool empty() const;
+    bool isEmpty() const;
     void top() const;
     int size() const;
 
@@ -86,7 +86,9 @@ void Stack<T>::print() const {
     // Expected output on CLI: (x1, x2, x3 ... xn)
     std::cout << "(";
     while (current != nullptr) {
+
         std::cout << current->data;
+
         if (current->next != nullptr) {
             std::cout << ", ";
         }
@@ -141,12 +143,11 @@ void Stack<T>::clear() {
 }
 
 template <typename T>
-bool Stack<T>::empty() const {
+bool Stack<T>::isEmpty() const {
     /* Method that return a boolean, if the stack its empty return true, else false */
 
-    if (Top == nullptr) {
-        return true;
-    }
+    if (Top == nullptr) return true;
+
     return false;
 
 }
