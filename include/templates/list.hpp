@@ -21,8 +21,10 @@ public:
     void print() const;
     void append(const T& value);
     int size() const;
+    void insert(const T& value, const int index);
     void pop(const int index);
     void clear();
+    bool isEmpty() const;
 
 protected:
     // Node Struct
@@ -34,6 +36,7 @@ protected:
     // Attributes
     Node* Head;
     Node* Tail;
+    int list_size;
 
 };
 
@@ -45,6 +48,7 @@ List<T>::List() {
 
     Head = nullptr;
     Tail = nullptr;
+    list_size = 0;
 }
 
 template <typename T>
@@ -54,7 +58,10 @@ List<T>::List(T data) {
     Head = new Node;
     Head->data = data;
     Head->next = nullptr;
+
     Tail = Head;
+
+    list_size = 1;
 }
 
 // - Deconstructors ------------------------------------------------------------------------
@@ -79,20 +86,17 @@ template <typename T>
 void List<T>::print() const {
     /* Method to print the complete list */
 
-    // If the list its empty then exit
-    if (Head == nullptr) return;
-
-    // Temporal pointer to print all the nodes of the list
+    // Temporal pointer to travel through the struct
     Node* current = Head;
 
     // Expected output on CLI: [x1, x2, x3 ... xn]
     std::cout << "[";
     while (current != nullptr) {
+
+        std::cout << current->data;
+
         if (current->next != nullptr) {
             std::cout << current->data << ", ";
-        }
-        else {
-            std::cout << current->data;
         }
         current = current->next;
     }
@@ -108,7 +112,7 @@ void List<T>::append(const T& value) {
     new_node->data = value;
     new_node->next = nullptr;
 
-    // If the list its empty, then the Head turns in the new item
+    // If the list its empty, then the Head and Tail turns in the new item
     if (Head == nullptr) {
         Head = new_node;
         Tail = new_node;
@@ -118,33 +122,60 @@ void List<T>::append(const T& value) {
         Tail->next = new_node;
         Tail = new_node;
     }
+
+    list_size++;
 }
 
 template <typename T>
 int List<T>::size() const {
-    /* Method that returns the size of the list */
 
-    // If the list its empty then return 0
-    if (Head == nullptr) return 0;
+    return list_size;
+}
+
+/* FIX */
+template <typename T>
+void List<T>::insert(const T& value, const int index) {
+    /* Method that insert an item by index */
     
-    // Counter to know the size of the list
-    int counter = 0;
+    int size = list_size;
 
-    // Temporal pointer used to travel the list
-    Node* current = Head;
-
-    while (current != nullptr) {
-        counter++;
-        current = current->next;
+    // Check if the list its empty and the index its diferent of 0
+    if (Head == nullptr && index != 0) {
+        std::cerr << "Error: the list is empty, the index must be 0" << std::endl;
+        return;
     }
-    return counter;
+
+    // Check if the index its on the range of the list
+    if (index > size || index < 0) {
+        std::cerr << "Error: The index " << index << " is out of bounds for the list. The valid index range is from 0 to " << size << " (size: " << size << ")." << std::endl;
+        return;
+    }
+
+    // Create the new node that will be add to the list
+    Node* new_node = new Node;
+    new_node->data = value;
+    new_node->next = nullptr;
+
+    // Case 1: The item will be add to the first element of the list
+    if (index == 0) {
+        new_node->next = Head;
+        Head = new_node;
+
+        // Check if the Tail its empty, this means that the list was empty and the Tail must be the Head as a first element
+        if (Tail == nullptr) {
+            Tail = Head;
+        }
+    }
+
+
+    list_size++;
 }
 
 template <typename T>
 void List<T>::pop(const int index) {
     /* Method that pop an item by index */
 
-    int size = this->size();
+    int size = list_size;
 
     // Check if the list its empty
     if (Head == nullptr) {
@@ -162,6 +193,11 @@ void List<T>::pop(const int index) {
     // Index is 0
     if (index == 0) {
         Head = Head->next;
+
+        // Check if the list its empty
+        if (Head == nullptr) {
+            Tail = nullptr;
+        }
     }
 
     else {
@@ -181,6 +217,7 @@ void List<T>::pop(const int index) {
         prev_node->next = to_delete->next;
     }
 
+    list_size--;
     delete to_delete;
 }
 
@@ -191,18 +228,24 @@ void List<T>::clear() {
     // If the list its empty then exit
     if (Head == nullptr) return;
 
-    // Temporal node pointer to delete it
-    Node* current = Head;
-
     while (Head != nullptr) {
-        Node* to_delete = current;
-        current = current->next;
+        Node* to_delete = Head;
+        Head = Head->next;
         delete to_delete;
 
     }
 
-    Head = nullptr;
     Tail = nullptr;
+    list_size = 0;
+}
+
+template <typename T>
+bool List<T>::isEmpty() const {
+    /* Method to check if the list is empty (return a boolean) */
+
+    if (Head == nullptr) return true;
+
+    return false;
 }
 
 #endif //LIST_HPP_
