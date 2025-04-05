@@ -10,11 +10,10 @@ void testList() {
 
     lista.print();
     std::cout << lista.size() << std::endl;
-    lista.pop(5);
-    lista.print();
 
-    lista.pop(1);
+    lista.insert(1000, 3);
     lista.print();
+    
 }
 
 int main(){
