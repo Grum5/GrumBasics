@@ -14,7 +14,7 @@ int main() {
 
     pila.top();
 
-    std::cout << pila.empty() << std::endl;
+    std::cout << pila.isEmpty() << std::endl;
 
     pila.pop();
 
